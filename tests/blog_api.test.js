@@ -62,6 +62,33 @@ test('title and url are mandatory', async () => {
   expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
 }, 100000)
 
+test('delete a blog', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+
+  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length-1)
+
+  const contents = blogsAtEnd.map(blog => blog.title)
+  expect(contents).not.toContain(blogToDelete.title)
+}, 100000)
+
+test('update likes of a blog', async () => {
+  const blogsInDb = await helper.blogsInDb()
+  const blogToUpdate = blogsInDb[0]
+  const blog = {
+    title: blogToUpdate.title,
+    author: blogToUpdate.author,
+    url: blogToUpdate.url,
+    likes: blogToUpdate.likes+1
+  }
+  const response = await api.put(`/api/blogs/${blogToUpdate.id}`).send(blog)
+
+  expect(response.body.likes).toBe(blogToUpdate.likes+1)
+}, 100000)
+
 afterAll(() => {
   mongoose.connection.close()
 })

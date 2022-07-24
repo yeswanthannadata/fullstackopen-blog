@@ -1,0 +1,9 @@
+PUT http://localhost:3003/api/blogs/62d194b343e04eff93123b49
+Content-Type: application/json
+
+{
+    "title": "Google Inc",
+    "author": "Sundar Pichai",
+    "url": "http://google.com",
+    "likes": 11
+}
